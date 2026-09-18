@@ -78,7 +78,7 @@ flowchart TB
       AUTH[Bearer token authentication]
       STREAM[POST /chat/stream<br/>Answer mode]
       CHAT[POST /chat<br/>Eval mode]
-      ROUTES[GET /health, /collections<br/>GET /images/{path}]
+      ROUTES[GET /health, /collections<br/>GET /images/:file_path]
       RAG[Agentic RAG pipeline]
       RAGAS[RAGAS evaluator<br/>Eval mode only]
       IMAGES[(extracted_images)]
