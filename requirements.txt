@@ -1,0 +1,57 @@
+# MedRAG — install from repo root:
+#   .venv\Scripts\activate
+#   pip install -r requirements.txt
+#
+# PyTorch CUDA 12.4 (RTX 4080). Primary index = PyTorch CUDA wheels (not PyPI CPU builds).
+# CPU-only: use https://download.pytorch.org/whl/cpu and cpu suffixed versions instead.
+# If install fails, use Python 3.11 or 3.12 (recommended for CUDA wheels).
+
+--index-url https://download.pytorch.org/whl/cu124
+--extra-index-url https://pypi.org/simple
+
+torch==2.6.0+cu124
+torchvision==0.21.0+cu124
+torchaudio==2.6.0+cu124
+
+numpy>=2.1.0,<2.3
+
+# API
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+python-dotenv==1.0.1
+python-multipart==0.0.12
+
+# Pydantic
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# LLM stack (chat only — 0.3.x)
+google-generativeai==0.8.3
+groq==0.13.0
+langchain-core>=0.3.25,<0.4
+langchain-google-genai==2.0.7
+langgraph==0.2.56
+
+# Local models (ingest + retrieval)
+sentence-transformers==3.3.1
+transformers==4.47.1
+accelerate>=1.2.0
+safetensors>=0.4.5
+
+# Images
+Pillow==11.0.0
+
+# Vector DB
+qdrant-client==1.12.1
+
+# BM25
+bm25s==0.2.6
+
+# PDF
+PyMuPDF==1.25.1
+pdfplumber==0.11.4
+
+# Utilities
+httpx==0.28.1
+tenacity==9.0.0
+tqdm==4.67.1

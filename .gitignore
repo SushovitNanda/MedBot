@@ -1,0 +1,50 @@
+# Secrets and local configuration
+.env
+.env.*
+!env.examples
+.venv/
+__pycache__/
+*.pyc
+
+# Source corpora and other large reference files
+**/*.pdf
+DHA Data/
+MDS Data/
+ORE Data/
+
+# Generated ingestion, retrieval, and vector-store data
+models_cache/
+qdrant_data/
+extracted_images/
+bm25_indexes/
+chunk_cache/
+**/chunks/
+kb_fingerprint.json
+frontend_instructions.json
+
+# Model and index binary formats
+*.bin
+*.joblib
+*.npy
+*.npz
+*.onnx
+*.arrow
+*.jsonl
+*.parquet
+*.pkl
+*.pickle
+*.pt
+*.pth
+*.safetensors
+
+# Local databases, logs, and runtime output
+*.db
+*.sqlite
+*.sqlite3
+*.log
+langfuse_data/
+
+# Frontend dependencies, builds, and local environment
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
