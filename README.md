@@ -33,21 +33,21 @@ This stack was chosen for a blend of performance, flexibility, and reliability. 
 
 ```mermaid
 flowchart TB
-   subgraph Sources[Exam knowledge sources]
-      DHA[DHA Data PDFs]
-      MDS[MDS Data PDFs]
-      ORE[ORE Data PDFs]
+   subgraph SG_Sources["Exam knowledge sources"]
+      DHA["DHA Data PDFs"]
+      MDS["MDS Data PDFs"]
+      ORE["ORE Data PDFs"]
    end
 
-   subgraph Ingestion[Offline or admin-triggered ingestion]
-      ING[ingest_exam]
-      EXTRACT[PyMuPDF and pdfplumber<br/>text, tables, figures]
-      CHUNK[Hierarchical and MCQ-aware chunking]
-      CAPTION[BLIP image captioning]
-      EMBED[MiniLM text embeddings]
-      CLIP[CLIP image embeddings]
-      BM25[(BM25 indexes)]
-      QDRANT[(Qdrant<br/>DHA / MDS / ORE collections)]
+   subgraph SG_Ingestion["Offline or admin-triggered ingestion"]
+      ING["ingest_exam"]
+      EXTRACT["PyMuPDF and pdfplumber<br/>text, tables, figures"]
+      CHUNK["Hierarchical and MCQ-aware chunking"]
+      CAPTION["BLIP image captioning"]
+      EMBED["MiniLM text embeddings"]
+      CLIP["CLIP image embeddings"]
+      BM25[("BM25 indexes")]
+      QDRANT[("Qdrant<br/>DHA / MDS / ORE collections")]
    end
 
    DHA --> ING
@@ -63,29 +63,29 @@ flowchart TB
    CAPTION --> QDRANT
    EMBED --> QDRANT
 
-   subgraph Client[User interface]
-      USER[Student in browser]
-      NEXT[Next.js frontend<br/>exam and mode selection]
-      SSE[Fetch ReadableStream<br/>SSE token events]
-      JSON[JSON response<br/>citations, confidence, metrics]
+   subgraph SG_Client["User interface"]
+      USER["Student in browser"]
+      NEXT["Next.js frontend<br/>exam and mode selection"]
+      SSE["Fetch ReadableStream<br/>SSE token events"]
+      JSONRESP["JSON response<br/>citations, confidence, metrics"]
    end
 
    USER --> NEXT
    NEXT --> SSE
-   NEXT --> JSON
+   NEXT --> JSONRESP
 
-   subgraph API[FastAPI service]
-      AUTH[Bearer token authentication]
-      STREAM[POST /chat/stream<br/>Answer mode]
-      CHAT[POST /chat<br/>Eval mode]
-      ROUTES[GET /health, /collections<br/>GET /images/:file_path]
-      RAG[Agentic RAG pipeline]
-      RAGAS[RAGAS evaluator<br/>Eval mode only]
-      IMAGES[(extracted_images)]
+   subgraph SG_API["FastAPI service"]
+      AUTH["Bearer token authentication"]
+      STREAM["POST /chat/stream<br/>Answer mode"]
+      CHAT["POST /chat<br/>Eval mode"]
+      ROUTES["GET /health, /collections<br/>GET /images/{file_path}"]
+      RAG["Agentic RAG pipeline"]
+      RAGAS["RAGAS evaluator<br/>Eval mode only"]
+      IMAGES[("extracted_images")]
    end
 
    SSE --> AUTH
-   JSON --> AUTH
+   JSONRESP --> AUTH
    AUTH --> STREAM
    AUTH --> CHAT
    AUTH --> ROUTES
@@ -94,19 +94,21 @@ flowchart TB
    CHAT --> RAGAS
    ROUTES --> IMAGES
 
-   subgraph Retrieval[Agentic retrieval and generation]
-      EXAM[Exam router<br/>namespace enforcement]
-      CLASSIFY[Query classifier]
-      HYBRID[Hybrid retrieval]
-      FUSION[RRF fusion]
-      RERANK[Cross-encoder reranker]
-      GRADE[Document relevance grader]
-      REWRITE[Conditional query rewrite<br/>retry loop]
-      GENERATE[Context-only answer generator]
-      CHECK[Hallucination checker]
-      STRICT[Strict regeneration]
-      LLM[Gemini cascade<br/>Groq fallback]
+   subgraph SG_Retrieval["Agentic retrieval and generation"]
+      EXAM["Exam router<br/>namespace enforcement"]
+      CLASSIFY["Query classifier"]
+      HYBRID["Hybrid retrieval"]
+      FUSION["RRF fusion"]
+      RERANK["Cross-encoder reranker"]
+      GRADE["Document relevance grader"]
+      REWRITE["Conditional query rewrite<br/>retry loop"]
+      GENERATE["Context-only answer generator"]
+      CHECK["Hallucination checker"]
+      STRICT["Strict regeneration"]
+      LLM["Gemini cascade<br/>Groq fallback"]
    end
+
+   RESPONSE["Answer plus citations,<br/>confidence and images"]
 
    RAG --> EXAM --> CLASSIFY --> HYBRID
    HYBRID --> QDRANT
@@ -117,21 +119,21 @@ flowchart TB
    GENERATE --> LLM
    GENERATE --> CHECK
    CHECK -->|unsupported answer| STRICT --> LLM
-   CHECK -->|grounded answer| RESPONSE[Answer plus citations,<br/>confidence and images]
+   CHECK -->|grounded answer| RESPONSE
    STRICT --> RESPONSE
    RAGAS --> RESPONSE
    RESPONSE --> SSE
-   RESPONSE --> JSON
+   RESPONSE --> JSONRESP
 
-   subgraph Runtime[Local runtime and optional services]
-      DOCKER[Docker Compose]
-      QSERVER[Qdrant server<br/>or embedded local Qdrant]
-      LANGFUSE[Optional Langfuse<br/>and PostgreSQL observability]
+   subgraph SG_Runtime["Local runtime and optional services"]
+      DOCKER["Docker Compose"]
+      QSERVER["Qdrant server<br/>or embedded local Qdrant"]
+      LANGFUSE["Optional Langfuse<br/>and PostgreSQL observability"]
    end
 
    DOCKER --> QSERVER
    QSERVER -.-> QDRANT
-   API -. optional tracing .-> LANGFUSE
+   RAG -.->|optional tracing| LANGFUSE
 ```
 
 1. Knowledge ingestion
